@@ -2,3 +2,6 @@
 - name: geerlingguy.docker
   src: https://github.com/geerlingguy/ansible-role-docker
   version: 2.5.4
+- name: atosatto.docker-swarm
+  src: https://github.com/atosatto/ansible-dockerswarm
+  version: 3dc40dca21eb4bf70ac0a494be1d63ff497e5b2c
