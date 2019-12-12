@@ -6,7 +6,11 @@
     docker_service_enabled: "yes"
     docker_service_state: "started"
     docker_swarm_interface: "eth1"
-    skip_docker_py: true
+
+    sysctl_overwrite:
+      net.ipv4.ip_forward: 1
 
   roles:
+    - dev-sec.os-hardening
     - atosatto.docker-swarm
+    - docker-remote-api

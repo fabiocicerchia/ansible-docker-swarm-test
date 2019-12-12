@@ -1,0 +1,43 @@
+---
+
+- name: Ensure certificates are available
+  block:
+    - name: Server Certificate
+      stat:
+        path: /root/.docker/server-cert.pem
+      register: server_cert
+    - name: Server Key
+      stat:
+        path: /root/.docker/server-key.pem
+      register: server_key
+
+- name: Create a CA and server keys with OpenSSL
+  become: true
+  shell: |
+      HOST="{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+      mkdir /root/.docker
+
+      openssl genrsa -out /root/.docker/ca-key.pem 4096
+      openssl req -subj "/CN=$HOST" -sha256 -new -key /root/.docker/ca-key.pem -out /root/.docker/ca.csr
+      openssl x509 -req -sha256 -in /root/.docker/ca.csr -signkey /root/.docker/ca-key.pem -out /root/.docker/ca.pem
+
+      openssl genrsa -out /root/.docker/server-key.pem 4096
+      openssl req -subj "/CN=$HOST" -sha256 -new -key /root/.docker/server-key.pem -out /root/.docker/server.csr
+      echo "subjectAltName = DNS:$HOST,IP:$HOST,IP:127.0.0.1" | tee /root/.docker/extfile.cnf
+      echo "extendedKeyUsage = serverAuth" | tee -a /root/.docker/extfile.cnf
+      openssl x509 -req -sha256 -in /root/.docker/server.csr -CA /root/.docker/ca.pem -CAkey /root/.docker/ca-key.pem -CAcreateserial -out /root/.docker/server-cert.pem -extfile /root/.docker/extfile.cnf
+
+      rm -f /root/.docker/ca.csr /root/.docker/server.csr /root/.docker/extfile.cnf
+      chmod 0400 /root/.docker/ca-key.pem /root/.docker/server-key.pem
+      chmod 0444 /root/.docker/ca.pem /root/.docker/server-cert.pem
+  when: not server_cert.stat.exists or not server_key.stat.exists
+
+- name: Patch the service configuration
+  lineinfile:
+    path: "/usr/lib/systemd/system/docker.service"
+    regexp: "^ExecStart=/usr/bin/dockerd -H fd://"
+    line: "ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock --tls --tlscert=/root/.docker/server-cert.pem --tlskey=/root/.docker/server-key.pem"
+    state: present
+  notify:
+    - Force systemd to reread configs
+    - Restart docker

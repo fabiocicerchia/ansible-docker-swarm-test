@@ -1,4 +1,7 @@
 ---
+- name: dev-sec.os-hardening
+  src: https://github.com/dev-sec/ansible-os-hardening
+  version: 5.2.1
 - name: atosatto.docker-swarm
   src: https://github.com/atosatto/ansible-dockerswarm
   version: 3dc40dca21eb4bf70ac0a494be1d63ff497e5b2c

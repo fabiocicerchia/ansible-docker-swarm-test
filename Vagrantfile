@@ -12,9 +12,9 @@ ansible_groups = {
 Vagrant.configure("2") do |config|
   config.vagrant.plugins = [ "vagrant-disksize" ]
 
-  config.vm.box = "centos/7"
+  config.vm.box         = "centos/7"
   config.vm.box_version = "1905.1"
-  config.disksize.size = "50GB"
+  config.disksize.size  = "50GB"
 
   config.vm.provider "virtualbox" do |specs|
     specs.cpus = 1
@@ -33,12 +33,13 @@ Vagrant.configure("2") do |config|
       # when all the machines are up and ready.
       if idx == vms.size - 1
         machine.vm.provision :ansible do |ansible|
-          ansible.become = true
-          ansible.galaxy_role_file = "requirements.yml"
-          ansible.groups = ansible_groups
-          ansible.limit = "all"
-          ansible.playbook = "playbooks/setup.yml"
-          ansible.version = "2.7.5"
+          ansible.become            = true
+          ansible.galaxy_role_file  = "requirements.yml"
+          ansible.galaxy_roles_path = "roles"
+          ansible.groups            = ansible_groups
+          ansible.limit             = "all"
+          ansible.playbook          = "playbooks/setup.yml"
+          ansible.version           = "2.7.5"
         end
       end
     end
