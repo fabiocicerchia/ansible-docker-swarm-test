@@ -1,6 +1,0 @@
-controller ansible_connection=local
-vm1      ansible_host=172.16.0.11 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/vm1/virtualbox/private_key
-vm2      ansible_host=172.16.0.12 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/vm2/virtualbox/private_key
-
-[nodes]
-vm[1:2]

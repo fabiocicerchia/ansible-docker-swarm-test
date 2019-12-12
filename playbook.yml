@@ -1,0 +1,9 @@
+- hosts: all
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.6
+    docker_compose_version: "1.25.0"
+    docker_package: "docker-{{ docker_edition }}-19.03.5"
+
+  roles:
+    - geerlingguy.docker

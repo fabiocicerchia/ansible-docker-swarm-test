@@ -7,24 +7,30 @@ Vagrant.configure("2") do |config|
     specs.memory = 512
   end
 
-  config.vm.define "vm1" do |machine|
-    machine.vm.network "private_network", ip: "172.16.0.11"
-  end
+  vms = {
+    'vm1' => '172.16.2.11',
+    'vm2' => '172.16.2.12',
+  }
 
-  config.vm.define "vm2" do |machine|
-    machine.vm.network "private_network", ip: "172.16.0.12"
-  end
+  vms.each_with_index do |(hostname, ip), idx|
+    config.vm.define "vm#{idx}" do |machine|
+      machine.vm.hostname = hostname
+      machine.vm.network "private_network", ip: ip
 
-  # Parallel Provisioning
-  config.vm.define 'controller' do |machine|
-    machine.vm.network "private_network", ip: "172.16.0.10"
+      # Workaround for missing python on the image
+      machine.vm.provision "shell", inline: "which python36 || sudo yum install -y python36"
 
-    config.vm.provision "ansible_local" do |ansible|
-      ansible.become = true
-      ansible.inventory_path = "inventory"
-      ansible.limit = "all"
-      ansible.playbook = "playbook.yml"
-      ansible.version = "2.8.5"
+      # Only execute once the Ansible provisioner,
+      # when all the machines are up and ready.
+      if idx == vms.size - 1
+        machine.vm.provision :ansible do |ansible|
+          ansible.become = true
+          ansible.galaxy_role_file = "requirements.yml"
+          ansible.limit = "all"
+          ansible.playbook = "playbook.yml"
+          ansible.version = "2.7.5"
+        end
+      end
     end
   end
 end
