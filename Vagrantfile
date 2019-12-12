@@ -1,7 +1,18 @@
+vms = {
+  'vm0' => { "ip" => "172.16.2.10" },
+  'vm1' => { "ip" => "172.16.2.11" },
+  'vm2' => { "ip" => "172.16.2.12" },
+}
+
+ansible_groups = {
+  "docker_swarm_manager" => ["vm0"],
+  "docker_swarm_worker"  => ["vm1", "vm2"]
+}
+
 Vagrant.configure("2") do |config|
   config.vagrant.plugins = [ "vagrant-disksize" ]
 
-  config.vm.box = "centos/8"
+  config.vm.box = "centos/7"
   config.vm.box_version = "1905.1"
   config.disksize.size = "50GB"
 
@@ -9,12 +20,6 @@ Vagrant.configure("2") do |config|
     specs.cpus = 1
     specs.memory = 256
   end
-
-  vms = {
-    'vm0' => { "group" => "docker_swarm_manager", "ip" => "172.16.2.10" },
-    'vm1' => { "group" => "docker_swarm_worker", "ip" => "172.16.2.11" },
-    'vm2' => { "group" => "docker_swarm_worker", "ip" => "172.16.2.12" },
-  }
 
   vms.each_with_index do |(hostname, opts), idx|
     config.vm.define "vm#{idx}" do |machine|
@@ -30,14 +35,10 @@ Vagrant.configure("2") do |config|
         machine.vm.provision :ansible do |ansible|
           ansible.become = true
           ansible.galaxy_role_file = "requirements.yml"
+          ansible.groups = ansible_groups
           ansible.limit = "all"
-          ansible.playbook = "playbook.yml"
+          ansible.playbook = "playbooks/setup.yml"
           ansible.version = "2.7.5"
-          # TODO: MOVE TO VAR
-          ansible.groups = {
-            "docker_swarm_manager" => ["vm0"],
-            "docker_swarm_worker"  => ["vm1","vm2"]
-          }
         end
       end
     end

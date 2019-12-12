@@ -1,13 +1,12 @@
 - hosts: all
 
   vars:
-    ansible_python_interpreter: /usr/bin/python3.6
-    #docker_package_version: "19.03.5"
+    docker_install_compose: false
+    docker_package_version: "19.03.5"
     docker_service_enabled: "yes"
     docker_service_state: "started"
+    docker_swarm_interface: "eth1"
     skip_docker_py: true
-    docker_install_compose: false
 
   roles:
-    - geerlingguy.docker
     - atosatto.docker-swarm
