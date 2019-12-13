@@ -34,12 +34,12 @@ Vagrant.configure("2") do |config|
       if idx == vms.size - 1
         machine.vm.provision :ansible do |ansible|
           ansible.become            = true
-          ansible.galaxy_role_file  = "requirements.yml"
+          ansible.galaxy_role_file  = "ansible-requirements.yml"
           ansible.galaxy_roles_path = "roles"
           ansible.groups            = ansible_groups
           ansible.limit             = "all"
           ansible.playbook          = "playbooks/setup.yml"
-          ansible.version           = "2.7.5"
+          ansible.version           = "2.8.6"
         end
       end
     end
