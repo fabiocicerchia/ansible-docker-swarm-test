@@ -1,32 +1,17 @@
-## Requirements
+# Ansible - Docker Swarm
 
- - [Ansible v2.7.5+](https://www.ansible.com/)
- - [Vagrant v2.2.6+](https://www.vagrantup.com/)
- - [Molecule v2.22+](https://molecule.readthedocs.io/en/stable/index.html) (optional)
+[![Build Status](https://travis-ci.org/fabiocicerchia/ansible-docker-swarm-test.svg?branch=master)](https://travis-ci.org/fabiocicerchia/ansible-docker-swarm-test)
 
-## Install
+## Stack
 
-```
-pip install --user -r pip-requirements.txt
-```
+ - [Ansible](https://www.ansible.com/)
+ - [Vagrant](https://www.vagrantup.com/)
+ - [TravisCI](https://travis-ci.org/)
 
-## Run the Environment
+## Documentation
 
-Launch the command:
-
-```
-vagrant plugin install vagrant-disksize
-vagrant up
-```
-
-## Stop the Environment
-
-Launch the command:
-
-```
-vagrant halt
-```
+All the documentation is available in the folder [`docs`](docs).
 
 ## License
 
-MIT
+MIT Licensed. See [LICENSE](docs/LICENSE.md) for full details.

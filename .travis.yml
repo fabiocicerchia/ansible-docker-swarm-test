@@ -9,5 +9,4 @@ install:
 script:
   - molecule --version
   - ansible --version
-  - ansible-lint playbooks/*.yml
-  - cd roles/docker-remote-api && molecule test
+  - ./bin/tests.sh
