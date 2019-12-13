@@ -1,12 +1,18 @@
 ---
+dist: bionic
 language: python
 python:
   - "2.7"
 services:
   - docker
 install:
+  - sudo apt-get update -q
+  - sudo apt-get upgrade -y
+  - sudo apt-get install -q virtualbox linux-generic linux-image-generic linux-headers-generic linux-signed-generic --fix-missing
+  - sudo wget -nv https://releases.hashicorp.com/vagrant/2.2.6/vagrant_2.2.6_x86_64.deb
+  - sudo dpkg -i vagrant_2.2.6_x86_64.deb
   - pip install -r pip-requirements.txt
 script:
   - molecule --version
   - ansible --version
-  - ./bin/tests.sh
+  - ./bin/tests.sh || cat /home/travis/.cache/molecule/docker-remote-api/default/vagrant-centos7.err
